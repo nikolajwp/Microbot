@@ -256,7 +256,7 @@ public class Rs2GroundItem {
     public static boolean waitForGroundItemDespawn(Runnable actionWhileWaiting,GroundItem groundItem){
         sleepUntil(() ->  {
             actionWhileWaiting.run();
-            sleepUntil(() -> groundItem != getGroundItems().get(groundItem.getLocation(), groundItem.getId()), Rs2Random.between(600, 2100));
+            sleepUntil(() -> groundItem != getGroundItems().get(groundItem.getLocation(), groundItem.getId()), Rs2Random.between(4200, 6900));
             return groundItem != getGroundItems().get(groundItem.getLocation(), groundItem.getId());
         });
         return groundItem != getGroundItems().get(groundItem.getLocation(), groundItem.getId());

@@ -37,6 +37,9 @@ public class NikoHunterScript extends Script {
     public static int MonkeyTailsCaught = 0;
     public static int MonkeyTailsFailed = 0;
 
+    long sessionStart;
+    long maxRunTime;
+
     @Getter
     private State currentState = SETTING_TRAP;
 
@@ -46,6 +49,8 @@ public class NikoHunterScript extends Script {
         Rs2Antiban.setActivity(Activity.GENERAL_HUNTER);
         MonkeyTailsCaught = 0;
         MonkeyTailsFailed = 0;
+        sessionStart = System.currentTimeMillis();
+        maxRunTime = 5 * 60 * 60 * (900 + new Random().nextInt(250)); // a about 15% over -> still under 5 hours
 
         mainScheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> {
             try {
@@ -54,6 +59,10 @@ public class NikoHunterScript extends Script {
                 if (Rs2Inventory.count(BANANA_ID) < 1) {
                     return;
                 }
+
+                checkIfPlayersNearby();
+
+                checkIfLogoutTime();
 
                 switch (currentState) {
                     case SETTING_TRAP:
@@ -70,6 +79,15 @@ public class NikoHunterScript extends Script {
                 Microbot.status = "Error: " + e.getClass().getSimpleName() + " - " + e.getMessage();
             }
         }, 0, 600, TimeUnit.MILLISECONDS);
+    }
+
+    private void checkIfLogoutTime() {
+        Microbot.log("Mili seconds left before timeout: " + (maxRunTime - System.currentTimeMillis() - sessionStart));
+        if (System.currentTimeMillis() - sessionStart > maxRunTime) {
+            Microbot.log("Session expired. Logging out...");
+            Rs2Player.logout();
+            sleep(Integer.MAX_VALUE);
+        }
     }
 
     private void handleBonesToBananas() {

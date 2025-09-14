@@ -121,6 +121,8 @@ public class NikoHunterScript extends Script {
         sleep(100, 1300);
         log.info("Done setting up trap");
 
+        checkIfPlayersNearby();
+
         if (Rs2Inventory.count(TAILS_ID) > 1 + new Random().nextInt(6)) {
             handleDropTails();
             sleep(500, 900);
@@ -173,15 +175,15 @@ public class NikoHunterScript extends Script {
 
     private void checkIfPlayersNearby() {
         if (Rs2Player.getPlayers(player ->
-                player.getWorldLocation().distanceTo(Rs2Player.getWorldLocation()) <= 5
+                player.getWorldLocation().distanceTo(Rs2Player.getWorldLocation()) <= 2
         ).count() > 0) {
             log.info("Players are nearby -> Waiting");
             sleep(80000, 160000);
             if (Rs2Player.getPlayers(player ->
-                    player.getWorldLocation().distanceTo(Rs2Player.getWorldLocation()) <= 5
+                    player.getWorldLocation().distanceTo(Rs2Player.getWorldLocation()) <= 2
             ).count() > 0) {
                 log.info("Players are still nearby -> Exiting");
-                Rs2Player.logoutIfPlayerDetected(1, 10000, 7);
+                Rs2Player.logoutIfPlayerDetected(1, 10000, 3);
                 Microbot.status = "stopping";
             }
         }

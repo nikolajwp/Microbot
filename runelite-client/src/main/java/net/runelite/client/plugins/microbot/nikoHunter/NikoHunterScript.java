@@ -11,6 +11,7 @@ import net.runelite.client.plugins.microbot.util.antiban.enums.Activity;
 import net.runelite.client.plugins.microbot.util.gameobject.Rs2GameObject;
 import net.runelite.client.plugins.microbot.util.grounditem.Rs2GroundItem;
 import net.runelite.client.plugins.microbot.util.inventory.Rs2Inventory;
+import net.runelite.client.plugins.microbot.util.math.Rs2Random;
 import net.runelite.client.plugins.microbot.util.player.Rs2Player;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class NikoHunterScript extends Script {
     public static int MonkeyTailsFailed = 0;
 
     long sessionStart;
-    long maxRunTime;
+    long runTimeBeforeLogout;
 
     @Getter
     private State currentState = SETTING_TRAP;
@@ -50,7 +51,7 @@ public class NikoHunterScript extends Script {
         MonkeyTailsCaught = 0;
         MonkeyTailsFailed = 0;
         sessionStart = System.currentTimeMillis();
-        maxRunTime = 5 * 60 * 60 * (900 + new Random().nextInt(250)); // a about 15% over -> still under 5 hours
+        runTimeBeforeLogout = 5L * 60 * 60 * Rs2Random.between(900, 1150);
 
         mainScheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> {
             try {
@@ -82,8 +83,9 @@ public class NikoHunterScript extends Script {
     }
 
     private void checkIfLogoutTime() {
-        Microbot.log("Mili seconds left before timeout: " + (maxRunTime - System.currentTimeMillis() - sessionStart));
-        if (System.currentTimeMillis() - sessionStart > maxRunTime) {
+        var milisecondsBeforeLogout = runTimeBeforeLogout - (System.currentTimeMillis() - sessionStart);
+        Microbot.log("Minutes before logout: " + milisecondsBeforeLogout / 1000 / 60);
+        if (System.currentTimeMillis() - sessionStart > runTimeBeforeLogout) {
             Microbot.log("Session expired. Logging out...");
             Rs2Player.logout();
             sleep(Integer.MAX_VALUE);

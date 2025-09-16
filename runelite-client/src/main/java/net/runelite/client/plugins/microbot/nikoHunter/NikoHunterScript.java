@@ -113,12 +113,12 @@ public class NikoHunterScript extends Script {
 
         log.info("Waiting to set up trap");
         sleepUntil(() -> Rs2GameObject.hasAction(convertToObjectComposition(Rs2GameObject.getGameObject(trapLocation)), actionSetTrap), 50000);
-        sleep(100, 1300);
+        sleep(500, 900);
         log.info("Setting up trap");
         Rs2GameObject.interact(trapLocation, actionSetTrap);
 
         sleepUntil(() -> Rs2GameObject.hasAction(convertToObjectComposition(Rs2GameObject.getGameObject(trapLocation)), actionDismantle), 5000);
-        sleep(100, 1300);
+        sleep(100, 1000);
         log.info("Done setting up trap");
 
         checkIfPlayersNearby();
